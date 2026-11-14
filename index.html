@@ -436,6 +436,7 @@ function parse(){
   if(p.own==='asked'||p.own==='confirmed') S.own=p.own;
   if(p.write==='now') S.write='now';
   if(p.modal==='fix') S.modal={type:'fix',id:p.id||'C1'};
+  if(p.modal==='progress') S.modal={type:'progress'};
   S.shot = ['1','2','3'].indexOf(p.shot)>=0 ? +p.shot : 0;
   if(S.trig==='none') S.tab='q';
 }
@@ -550,7 +551,7 @@ function steerSummary(){
 /* ---------- Shared pieces ---------- */
 function guide(){ // one line that tells a reviewer what to do on this screen
   if(S.screen==='setup') return 'Start here. Pick a top priority, press Next, then “Done, open Day One”. The deck’s example is “An AI rollout”.';
-  if(S.screen==='day') return S.hour===24 ? 'This is hour 24. Next: open Scan plan and move a system up.'
+  if(S.screen==='day') return S.hour===24 ? 'This is hour 24. Tap “Progress update” in the CISO’s message, then open Scan plan and move a system up.'
     : 'This is hour '+S.hour+'. Use Time to move to '+(S.hour===3?'hour 8 and hour 24':'hour 24')+'.';
   return 'Press “Scan this first” on any system. You see the cost before anything moves.';
 }
@@ -751,7 +752,7 @@ function viewDay(){
   if(H===3){
     replies='<div class="replies"><button class="chip'+(tapped?' on':'')+'" data-act="cisoscan" aria-pressed="'+tapped+'">Scan it first</button><button class="chip" data-act="cisochange">Change the priority</button><button class="chip" data-act="cisoopen">Open</button></div>';
   } else {
-    replies='<div class="replies"><button class="chip" data-act="cisoopen">Open</button></div>';
+    replies='<div class="replies">'+(H===24?'<button class="chip" data-act="progress">Progress update</button>':'')+'<button class="chip" data-act="cisoopen">Open</button></div>';
   }
   if(askedC) replyNote='The CISO replied to the hour-3 message: “Scan it first”. You confirmed it at hour '+cs.at+'.';
   else if(pending()) replyNote='The CISO replied to the hour-3 message: “Scan it first”. It is waiting for you in the scan plan.';
@@ -760,7 +761,7 @@ function viewDay(){
   var sent='<section class="card sent"><div class="cardhead"><h2>Sent to the CISO</h2><span class="muted small">Hour '+H+' message</span></div><div class="sentbody">'+
     '<div class="msgbox"><p>'+esc(messageText())+'</p>'+(H===3?'<p>'+offerText()+'</p>':'')+(hs?'<p class="hs">'+hs+'</p>':'')+replies+'</div>'+
     (replyNote?'<p class="cap"><b>'+replyNote+'</b></p>':'')+
-    rnote('The CISO mostly reads these messages and rarely logs in. '+(H===3&&!replyNote?'Tap a reply to see how it reaches the lead.':'A tapped reply reaches the lead as a request.'))+'</div></section>';
+    rnote('The CISO mostly reads these messages and rarely logs in. '+(H===3&&!replyNote?'Tap a reply to see how it reaches the lead.':(H===24?'Tap “Progress update” to see what they can share upward.':'A tapped reply reaches the lead as a request.')))+'</div></section>';
 
   // risks
   var restCount=ai ? (d.rest?d.rest.found:0) : 0, tab=ai?S.tab:'q';
@@ -863,8 +864,24 @@ function viewPlan(){
 }
 
 /* ---------- Overlays ---------- */
+function progressText(){ // what the CISO gets with one tap at hour 24: progress only, written to forward upward
+  var d=dayNums(), ai=S.trig==='ai';
+  var work = ai ? '14 have a ticket, and 3 are fixed and verified' : '19 have a ticket, and 4 are fixed and verified';
+  if(ai) return 'Day one of our data security scan is on track. Our top priority is the AI rollout: '+d.found+' critical risks found so far, an estimated '+d.range+' of the total. The team is already working on them: '+work+'. '+Math.round(d.read/1240*100)+'% of the stores our AI tools can reach have been read, and the rest finish on '+d.done+'. The full picture of our data arrives by Nov 28.';
+  return 'Day one of our data security scan is on track. '+d.found+' critical risks found so far across our data, an estimated '+d.range+' of the total. The team is already working on them: '+work+'. The most exposed stores finish in about '+tier1Hours()+' hours, and the full picture arrives by Nov 28.';
+}
 function modal(){
-  var m=S.modal; if(!m || m.type!=='fix') return '';
+  var m=S.modal;
+  if(m && m.type==='progress'){
+    return '<div class="overlay" data-act="close-bg"><div class="modal" role="dialog" aria-modal="true">'+
+      '<h2>Progress update, ready to share</h2>'+
+      '<p class="muted">One tap on the hour-24 message gives the CISO this. It is written in their voice, to forward upward.</p>'+
+      '<div class="msgbox" style="margin:12px 0"><p>'+esc(progressText())+'</p></div>'+
+      '<p class="muted">It says what is done and what is left. It names no stores and gives no finding details.</p>'+
+      '<div class="row"><button class="btn primary" data-act="copyupdate">Copy text</button><button class="btn text" data-act="close">Close</button></div>'+
+      '</div></div>';
+  }
+  if(!m || m.type!=='fix') return '';
   var r=RISKS.filter(function(x){return x.id===m.id;})[0];
   var sample=!(r.confirmed && S.hour===24);
   var body='<h2>Fix '+r.name+' from here?</h2>'+
@@ -940,6 +957,10 @@ document.addEventListener('click',function(ev){
       break;
     case 'undo': delete S.status[el.dataset.id]; render(); break;
     case 'fix': S.modal={type:'fix',id:el.dataset.id}; render(); break;
+    case 'progress': S.modal={type:'progress'}; render(); break;
+    case 'copyupdate':
+      try{ if(navigator.clipboard) navigator.clipboard.writeText(progressText().replace(/\u2060/g,'')); }catch(e){}
+      S.modal=null; render(); toast('Copied. The CISO can paste it into an email or a chat.'); break;
     case 'fixany': S.modal=null; render(); toast('In the product, this opens the permission review, then a preview of the change.'); break;
     case 'access': S.access=true; render(); toast('Request sent to the owners of the 4 environments.'); break;
     case 'perm': S.perm=true; render(); toast('Missing: read permission on 120 stores. Sent to the account owner with the exact steps.'); break;
