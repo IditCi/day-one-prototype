@@ -594,7 +594,7 @@ function stepQuestion(p){
     '<div class="row"><button class="btn sm primary" data-act="ownyes">Yes, read these first</button><button class="btn sm" data-act="ownedit">Edit</button></div></div>';
   else if(S.own==='confirmed') reading='<div class="reading"><b>Confirmed.</b> The plan preview now starts with the acquired company, and the trade-off is shown beside it. <button class="linkbtn" data-act="ownedit">Edit</button></div>';
   opts+='<div class="opt ownopt'+(ownOn?' on':'')+'"><label class="ol"><input type="radio" name="trig" value="own" data-act="pick"'+(ownOn?' checked':'')+'>'+
-      '<div><span class="t">In your own words</span> <span class="a">Type it as the CISO said it, and check how we read it.</span><span class="rtag">Later version</span></div></label>'+
+      '<div><span class="t">In your own words</span> <span class="a">Type it as the CISO said it, and check how we read it.</span><span class="rtag">Phase 3</span></div></label>'+
       (ownOn ? '<div class="ownbody"><div class="askrow"><input type="text" aria-label="The CISO’s top priority in your own words" data-in="own" value="'+esc(S.ownText)+'"><button class="btn" data-act="ask">Ask</button></div>'+reading+
         rnote('Here, any text gets the same reading.')+'</div>' : '')+
     '</div>';
@@ -753,7 +753,7 @@ function viewDay(){
   var replies='', replyNote='', askedC=!!(cs&&H>=cs.at);
   var tapped = H===3 && (pending() || askedC || S.req==='declined' || !!cs);
   if(H===3){
-    replies='<div class="replies"><button class="chip'+(tapped?' on':'')+'" data-act="cisoscan" aria-pressed="'+tapped+'">Scan it first</button><button class="chip" data-act="cisochange">Change the priority</button><button class="chip" data-act="cisoopen">Open</button></div>';
+    replies='<div class="replies"><button class="chip'+(tapped?' on':'')+'" data-act="cisoscan" aria-pressed="'+tapped+'">Scan it first</button><span class="rtag" style="margin-left:0" title="Steering by system comes in phase 2 of the rollout">Phase 2</span><button class="chip" data-act="cisochange">Change the priority</button><button class="chip" data-act="cisoopen">Open</button></div>';
   } else {
     replies='<div class="replies">'+(H===24?'<button class="chip" data-act="progress">Progress update</button>':'')+'<button class="chip" data-act="cisoopen">Open</button></div>';
   }
@@ -794,7 +794,7 @@ function viewDay(){
     '</div>'+
     '<div class="grid2 day2">'+
       '<section class="card"><div class="cardhead"><h2>Top risks so far</h2>'+riskTabs+'</div>'+riskBody+
-        '<div style="padding:0 18px 12px">'+rnote('Press Fix on any risk to see the warning on early fixes. On a risk marked “Confirmed by the full scan” the warning is gone.')+'</div>'+(foot?'<div class="cardfoot">'+foot+'</div>':'')+'</section>'+
+        '<div style="padding:0 18px 12px">'+rnote('Press Fix on any risk to see the warning on early fixes. On a risk marked “Confirmed by the full scan” the warning is gone.<span class="rtag">Phase 2</span>')+'</div>'+(foot?'<div class="cardfoot">'+foot+'</div>':'')+'</section>'+
       '<section class="card"><div class="cardhead"><h2>What is read, and what is not yet</h2></div>'+coverage()+'</section>'+
     '</div>';
 }
@@ -861,7 +861,7 @@ function viewPlan(){
   changes.push(['Setup', S.trig==='ai'?'The top priority, the AI rollout, set the starting order.':'No trigger was given, so the starting order is by exposure.']);
   return '<div class="pagehead"><div><h1>Scan plan</h1><p class="sub">Systems in the order they are read, as of hour '+S.hour+'. Any of them can be moved up.</p></div></div>'+
     (e?'<div class="strip plan"><div class="grow">'+steerSummary()+'</div><button class="btn sm" data-act="unsteer">'+(e&&e.n>1?'Undo the last change':'Undo')+'</button></div>':'')+
-    '<section class="card"><div class="phead"><span>#</span><span>System</span><span>Stores</span><span>Why it sits here</span><span>First look finishes</span><span></span></div>'+rows+'</section>'+
+    '<section class="card"><div class="phead"><span>#</span><span>System</span><span>Stores</span><span>Why it sits here</span><span>First look finishes</span><span class="right"><span class="rtag" title="Steering by system comes in phase 2 of the rollout">Phase 2</span></span></div>'+rows+'</section>'+
     '<section class="card changes"><div class="cardhead"><h2>Every change comes with its reason</h2></div><ul>'+
       changes.map(function(c){return '<li><span>'+c[0]+'</span><span>'+c[1]+'</span></li>';}).join('')+'</ul></section>';
 }
@@ -888,7 +888,7 @@ function modal(){
   var r=RISKS.filter(function(x){return x.id===m.id;})[0];
   var sample=!(r.confirmed && S.hour===24);
   var body='<h2>Fix '+r.name+' from here?</h2>'+
-    (sample ? '<div class="warnbox">This finding is based on a sample, and the full scan is not done yet. Fixing it from here now could affect something we have not fully mapped.</div><p class="muted">Recommended: open a ticket and fix it in your own tool. The warning lifts for this store once its full scan is done.</p>'
+    (sample ? '<div class="warnbox">This finding is based on a sample, and the full scan is not done yet. Fixing it from here now could affect something we have not fully mapped.<span class="rtag">Phase 2</span></div><p class="muted">Recommended: open a ticket and fix it in your own tool. The warning lifts for this store once its full scan is done.</p>'
             : '<p>This store is fully scanned, so the finding is confirmed and the early-fix warning no longer applies.</p>')+
     '<p class="muted" style="margin-top:8px">Fixing from here needs write access. Day one connects read-only, and write access is offered per platform. You see a preview before anything changes.</p>'+
     '<div class="row"><button class="btn primary" data-act="ticket" data-id="'+r.id+'">Open ticket</button><button class="btn" data-act="fixany">'+(sample?'Fix it here anyway':'Review permissions')+'</button><button class="btn text" data-act="close">Cancel</button></div>';
