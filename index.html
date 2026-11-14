@@ -705,9 +705,12 @@ function numbers(d){ // the two bars: how much is read, how much is found
     var rp=d.read/1240*100;
     html+='<div class="nb"><div class="nb-top"><span>Stores read</span><b>'+num(d.read)+' of 1,240</b></div>'+
       '<div class="nbar" role="img" aria-label="'+num(d.read)+' of 1,240 stores read"><i class="fill" style="width:'+rp.toFixed(1)+'%"></i></div></div>';
-  } else if(H===24){
-    html+='<div class="nb"><div class="nb-top"><span>Stores given a first look</span><b>about 5% of about 350,000</b></div>'+
-      '<div class="nbar" role="img" aria-label="About 5 percent of stores given a first look"><i class="fill" style="width:5%"></i></div></div>';
+  } else {
+    // the whole estate: the same blue bar at every hour. By count it is small, because the most exposed stores are read first
+    var share={3:['under 1%',0.3],8:['about 1%',1.1],24:['about 5%',5]}[H];
+    html+='<div class="nb"><div class="nb-top"><span>Stores read</span><b>'+share[0]+' of about 350,000</b></div>'+
+      '<div class="nbar" role="img" aria-label="'+share[0]+' of about 350,000 stores read"><i class="fill" style="width:'+share[1]+'%;min-width:4px"></i></div>'+
+      '<div class="nb-note"><span>Small by count: the most exposed stores are read first.</span></div></div>';
   }
   var zs = d.firm ? d.tlo : d.zone, fill=d.found/d.scale*100, zl=zs/d.scale*100;
   var zoneLabel = d.firm ? 'estimated total: '+d.tlo+' to '+d.thi : 'estimate still wide';
