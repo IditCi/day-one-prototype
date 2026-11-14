@@ -1,0 +1,1009 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta name="robots" content="noindex">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Day One</title>
+<style>
+:root{
+  --bg:#F6F6F8; --card:#FFFFFF; --ink:#141420; --muted:#6B6B80; --line:#E4E4EA; --line2:#D0D0DA;
+  --violet:#6B4EE6; --violet-tint:#EEEAFD; --violet-ink:#4A2FC4; --crimson:#9B1C3A; --crimson-tint:#FBE9EE;
+  --blue:#2F6FED; --green:#1E9E6A; --green-tint:#E4F6ED; --teal:#0F6B5C; --teal-tint:#D7F3EE;
+  --amber:#8A5A00; --amber-tint:#FFF3D1; --track:#EDEDF1;
+  /* the reviewer layer: everything that is not the product */
+  --rv-bg:#FFF7C7; --rv-note:#FFFBE0; --rv-line:#C9A700; --rv-ink:#4A3B00; --rv-label:#7A6300;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{font-family:Inter,"Segoe UI",system-ui,-apple-system,sans-serif;font-size:14px;line-height:1.45;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer}
+h1,h2,h3,p{margin:0}
+b,strong{font-weight:600}
+
+/* Prototype controls (reviewer layer, not product chrome) */
+.chrome{position:sticky;top:0;z-index:20}
+.pbar{display:flex;align-items:center;flex-wrap:wrap;gap:6px 16px;padding:6px 20px;background:var(--rv-bg);border-bottom:1px dashed var(--rv-line);color:var(--rv-ink);font-size:12.5px}
+.pbar .pt{flex:1;min-width:260px}
+.pbar .pl{font-weight:700;font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--rv-label);margin-right:8px}
+.pbar .grp{display:flex;align-items:center;gap:6px;white-space:nowrap}
+.pbar .k{color:var(--rv-label)}
+.pseg{display:inline-flex;border:1px solid #CDB54A;border-radius:7px;background:var(--rv-note);padding:2px}
+.pseg button{border:0;background:transparent;padding:2px 9px;border-radius:5px;font-size:12.5px;font-weight:500;color:var(--rv-ink)}
+.pseg button:hover{background:#FFF1A8}
+.pseg button.on{background:var(--rv-ink);color:var(--rv-bg)}
+.pbtn{border:1px solid #CDB54A;background:var(--rv-note);border-radius:7px;padding:2px 10px;font-size:12.5px;font-weight:500;color:var(--rv-ink)}
+.pbtn:hover{background:#FFF1A8}
+.rnote{margin-top:10px;padding:7px 10px;border:1px dashed var(--rv-line);background:var(--rv-note);border-radius:8px;font-size:12.5px;color:var(--rv-ink)}
+.rnote::before{content:"For reviewers";font-size:10.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--rv-label);margin-right:7px}
+.rnote b{color:#2E2500}
+
+/* Top bar */
+.topbar{height:52px;display:flex;align-items:center;gap:14px;padding:0 20px;background:#fff;border-bottom:1px solid var(--line)}
+.iconbtn{border:0;background:transparent;padding:6px;border-radius:6px;display:flex}
+.iconbtn:hover{background:var(--bg)}
+.brand{display:flex;align-items:center;gap:8px;font-weight:650;font-size:15px;white-space:nowrap}
+.mark{width:22px;height:22px;border-radius:6px;background:var(--ink);position:relative;flex:none}
+.mark::after{content:"";position:absolute;left:5px;right:5px;bottom:6px;height:6px;border-radius:6px 6px 0 0;background:#fff}
+.proj{display:flex;align-items:center;gap:6px;padding:5px 10px;border:1px solid var(--line);border-radius:8px;white-space:nowrap;font-size:13px}
+.tabs{display:flex;gap:2px;align-self:stretch;margin-left:8px}
+.tabs a{display:flex;align-items:center;gap:6px;padding:0 12px;color:var(--muted);text-decoration:none;border-bottom:2px solid transparent;border-top:2px solid transparent;font-weight:500;white-space:nowrap}
+.tabs a:hover{color:var(--ink)}
+.tabs a.on{color:var(--ink);border-bottom-color:var(--ink)}
+.badge{min-width:17px;height:17px;padding:0 5px;border-radius:9px;background:var(--violet);color:#fff;font-size:11px;font-weight:600;display:inline-grid;place-items:center}
+.spacer{flex:1}
+.user{display:flex;align-items:center;gap:8px;white-space:nowrap;line-height:1.2}
+.avatar{width:28px;height:28px;border-radius:50%;background:var(--violet-tint);color:var(--violet-ink);font-size:11.5px;font-weight:600;display:grid;place-items:center}
+.user b{display:block;font-size:13px}
+.user span.r{font-size:11.5px;color:var(--muted)}
+
+/* Page */
+.page{max-width:1360px;margin:0 auto;padding:18px 24px 72px}
+.pagehead{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;margin-bottom:12px}
+.pagehead > div:first-child{flex:1;min-width:0}
+.steps{flex:none}
+.pagehead h1{font-size:26px;font-weight:600;letter-spacing:-.01em;line-height:1.2}
+.sub{color:var(--muted);margin-top:2px}
+.muted{color:var(--muted)}
+.small{font-size:12.5px}
+
+.seg{display:inline-flex;border:1px solid var(--line2);border-radius:8px;background:#fff;padding:2px}
+.seg button{border:0;background:transparent;padding:5px 12px;border-radius:6px;font-weight:500;color:var(--muted);white-space:nowrap}
+.seg button:hover{color:var(--ink)}
+.seg button.on{background:var(--ink);color:#fff}
+.seg.light button{padding:3px 10px;font-size:12.5px}
+.seg.light button.on{background:var(--bg);color:var(--ink);box-shadow:inset 0 0 0 1px var(--line2)}
+
+.btn{border:1px solid var(--line2);background:#fff;border-radius:8px;padding:7px 14px;font-weight:500;white-space:nowrap}
+.btn:hover{background:var(--bg)}
+.btn.primary{background:var(--ink);border-color:var(--ink);color:#fff}
+.btn.primary:hover{background:#2a2a3a}
+.btn.primary:disabled{background:#B9B9C6;border-color:#B9B9C6;cursor:not-allowed}
+.btn.text{border-color:transparent;background:transparent;color:var(--muted)}
+.btn.text:hover{color:var(--ink);background:var(--bg)}
+.btn.sm{padding:4px 10px;font-size:12.5px;border-radius:7px}
+
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px}
+.pad{padding:18px 20px}
+.cardhead{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:12px 18px;border-bottom:1px solid var(--line)}
+.cardhead h2{font-size:15px;font-weight:600}
+h2{font-size:17px;font-weight:600}
+h3{font-size:14px;font-weight:600}
+.label{font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+.grid2{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:14px;margin-bottom:14px;align-items:start}
+.grid2.setup{grid-template-columns:minmax(0,1.05fr) minmax(0,1fr)}
+
+.pill{display:inline-flex;align-items:center;gap:5px;padding:1px 8px;border-radius:6px;font-size:12px;font-weight:500;white-space:nowrap;line-height:1.6}
+.pill.crit{background:var(--crimson);color:#fff}
+.pill.restricted{background:#FBD0D8;color:#7A1230}
+.pill.confidential{background:#FCDDBF;color:#7A3E06}
+.pill.sample{background:#fff;color:var(--muted);box-shadow:inset 0 0 0 1px var(--line2)}
+.pill.confirmed{background:var(--green-tint);color:#12613F}
+.pill.new{background:var(--teal-tint);color:var(--teal)}
+.pill.ticketed{background:#E6EEFE;color:#1F4FB8}
+.pill.q{background:var(--violet-tint);color:var(--violet-ink)}
+.pill.up{background:#fff;color:var(--muted);box-shadow:inset 0 0 0 1px var(--line2)}
+.pill.done{background:#fff;color:#12613F;box-shadow:inset 0 0 0 1px #9ED9BD}
+.pill.warn{background:var(--amber-tint);color:var(--amber)}
+.pill.bad{background:var(--crimson-tint);color:var(--crimson)}
+
+.strip{display:flex;gap:10px;align-items:center;padding:9px 14px;border-radius:10px;border:1px solid var(--line);background:#fff;margin-bottom:12px}
+.strip.ok{border-color:#BFE6D2;background:var(--green-tint);align-items:flex-start}
+.strip.plan{border-color:#D5CCFA;background:var(--violet-tint)}
+.strip .dot{width:8px;height:8px;border-radius:50%;background:var(--green);margin-top:6px;flex:none}
+.strip .grow{flex:1}
+.linkbtn{border:0;background:transparent;padding:0;color:var(--violet-ink);font-weight:500;text-decoration:underline;text-underline-offset:2px;white-space:nowrap}
+
+/* Setup */
+.steps{display:flex;gap:18px;list-style:none;margin:0;padding:0;font-size:12.5px;color:var(--muted);counter-reset:s}
+.steps li{counter-increment:s;display:flex;align-items:center;gap:6px;white-space:nowrap}
+.steps li::before{content:counter(s);width:18px;height:18px;border-radius:50%;display:grid;place-items:center;font-size:11px;font-weight:600;background:#fff;box-shadow:inset 0 0 0 1px var(--line2)}
+.steps li.done::before{content:"\2713";background:var(--green);color:#fff;box-shadow:none}
+.steps li.cur{color:var(--ink);font-weight:600}
+.steps li.cur::before{background:var(--ink);color:#fff;box-shadow:none}
+.steps button{border:0;background:none;padding:0;color:inherit;font:inherit;cursor:pointer}
+.stabs{display:flex;gap:4px;margin:0 0 16px;padding:4px;background:var(--bg);border:1px solid var(--line);border-radius:10px}
+.stabs button{flex:1;display:flex;align-items:center;justify-content:center;gap:8px;border:0;background:transparent;padding:8px 10px;border-radius:7px;font:inherit;font-weight:600;color:var(--muted);cursor:pointer}
+.stabs button:hover{color:var(--ink)}
+.stabs button.on{background:#fff;color:var(--ink);box-shadow:0 1px 2px rgba(20,20,32,.08),inset 0 0 0 1px var(--line2)}
+.stabs .n{width:20px;height:20px;border-radius:50%;display:grid;place-items:center;font-size:11.5px;background:#fff;box-shadow:inset 0 0 0 1px var(--line2)}
+.stabs button.on .n{background:var(--ink);color:#fff;box-shadow:none}
+.steps button:hover{text-decoration:underline;text-underline-offset:2px}
+.qhead{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.opts{display:grid;gap:7px;margin:12px 0 4px}
+.opt{display:grid;grid-template-columns:18px 1fr;gap:3px 10px;align-items:start;padding:9px 14px;border:1px solid var(--line);border-radius:10px;cursor:pointer;background:#fff}
+.opt:hover{border-color:var(--line2)}
+.opt input{margin:3px 0 0;accent-color:var(--ink)}
+.opt.on{border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}
+.opt .t{font-weight:600}
+.opt .a{color:var(--muted)}
+.opt .d{display:block;font-size:13px;color:var(--muted);margin-top:1px}
+.ownopt{display:block}
+.ownopt .ol{display:grid;grid-template-columns:18px 1fr;gap:3px 10px;align-items:start;cursor:pointer}
+.ownbody{margin:10px 0 2px 28px}
+.ownbody .askrow{margin-top:0}
+.ownbody .askrow input{margin:0}
+.ownopt.on .askrow input{border-color:var(--ink)}
+.rtag{display:inline-block;margin-left:8px;vertical-align:1px;padding:0 6px;font-size:10px;font-weight:700;line-height:1.7;letter-spacing:.07em;text-transform:uppercase;color:var(--rv-label);background:var(--rv-note);border:1px dashed var(--rv-line);border-radius:5px;white-space:nowrap}
+.tools{margin:8px 0 2px;padding:11px 14px;border:1px solid var(--line);border-radius:10px;background:#FBFBFC}
+.tools .s2{font-size:12.5px;color:var(--muted)}
+.toolgrid{display:grid;grid-template-columns:1fr 1fr;gap:6px 16px;margin-top:8px}
+.check{display:flex;gap:8px;align-items:flex-start;cursor:pointer}
+.check input{margin:3px 0 0;accent-color:var(--ink);flex:none}
+.check b{display:block;font-weight:600;font-size:13.5px}
+.check .n{display:block;font-size:12px;color:var(--muted);line-height:1.35}
+.hint{font-size:12.5px;color:var(--muted);margin-top:8px}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:14px}
+.own{margin-top:14px;padding-top:12px;border-top:1px solid var(--line)}
+.own.on .askrow input{border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}
+.askrow{display:flex;gap:8px;margin-top:8px}
+.askrow input{flex:1;min-width:0;padding:8px 11px;border:1px solid var(--line2);border-radius:8px;background:#fff}
+.reading{margin-top:10px;padding:11px 13px;border-radius:10px;background:var(--violet-tint)}
+.reading .row{margin-top:9px}
+.dests{margin-top:6px}
+.dest{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.35fr);gap:12px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line)}
+.dest:last-child{border-bottom:0}
+.dest b{display:block}
+.dest .d{display:block;font-size:12.5px;color:var(--muted);line-height:1.35}
+.ctl{display:flex;gap:6px;align-items:center}
+.ctl select{flex:none;width:118px;padding:6px 6px;border:1px solid var(--line2);border-radius:8px;background:#fff;font-size:13px}
+.ctl input{flex:1;min-width:0;padding:6px 9px;border:1px solid var(--line2);border-radius:8px;background:#fff;font-size:13px}
+.ctl .static{color:var(--muted);font-size:13px;padding:6px 0}
+.sect{margin-top:14px;padding-top:12px;border-top:1px solid var(--line)}
+.pv{padding:6px 10px 2px}
+.pv .syskind{white-space:normal}
+.pvrow{display:grid;grid-template-columns:26px minmax(0,1fr) auto;gap:10px;align-items:center;padding:6px 8px;border-bottom:1px solid var(--line);background:#fff}
+.pvrow:last-child{border-bottom:0}
+.pvrow.tagged{background:#FAF8FF}
+.num{width:24px;height:24px;border-radius:6px;display:grid;place-items:center;font-weight:600;font-size:12.5px;background:var(--bg);color:var(--muted)}
+.tagged .num{background:var(--violet);color:#fff}
+.sysname{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.syskind{color:var(--muted);font-size:12.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tags{display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+.trade{margin:10px 16px 16px;padding:12px 14px;border-radius:10px;background:var(--violet-tint)}
+.trade .label{color:var(--violet-ink);margin-bottom:3px}
+.trade p + .label{margin-top:10px}
+
+/* Day One: the answer */
+.row1{display:grid;grid-template-columns:minmax(0,2.35fr) minmax(0,1fr);gap:14px;margin-bottom:14px;align-items:stretch}
+.answer{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr)}
+.ans-main{padding:16px 20px}
+.ans-nums{padding:16px 20px;border-left:1px solid var(--line)}
+.question{color:var(--muted);margin:2px 0 8px}
+.answertext{font-size:17px;line-height:1.4;font-weight:500;letter-spacing:-.005em}
+.decision{margin-top:11px;padding:8px 12px;border-left:3px solid var(--violet);background:var(--violet-tint);border-radius:0 8px 8px 0}
+.decision .label{color:var(--violet-ink);display:block;margin-bottom:1px}
+.decision b{font-size:14.5px}
+.restline{margin-top:10px;font-size:12.5px;color:var(--muted)}
+.nb{margin-top:10px}
+.nb-top{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:5px}
+.nb-top b{white-space:nowrap}
+.nbar{position:relative;height:8px;border-radius:4px;background:var(--track)}
+.nbar .fill{position:absolute;left:0;top:0;bottom:0;border-radius:4px;background:var(--blue)}
+.nbar .fill.crim{background:var(--crimson)}
+.nbar .zone,.swatch{background:repeating-linear-gradient(135deg,#C9869A 0 2px,#F7DCE3 2px 5px);box-shadow:inset 0 0 0 1px #C9869A}
+.nbar .zone{position:absolute;top:-2px;bottom:-2px;border-radius:3px}
+.nb-note{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:6px;font-size:12.5px;color:var(--muted)}
+.nb-note .z{display:inline-flex;align-items:center;gap:6px;color:var(--ink)}
+.swatch{display:inline-block;width:16px;height:9px;border-radius:2px}
+.sureline{margin-top:12px;padding-top:10px;border-top:1px solid var(--line)}
+.sureline .range{font-size:22px;font-weight:600;letter-spacing:-.01em;margin-right:6px}
+.sureline .early{font-size:15px;font-weight:600;margin-right:6px}
+.how{margin:8px 0 0;padding:0 0 0 18px;font-size:12.5px}
+.how li{margin-bottom:4px}
+.sent{display:flex;flex-direction:column}
+.sentbody{padding:12px 16px 14px;display:flex;flex-direction:column;gap:9px;flex:1}
+.sentbody .rnote{margin-top:0}
+.msgbox{border:1px solid var(--line);background:var(--bg);border-radius:4px 12px 12px 12px;padding:10px 12px;font-size:13.5px}
+.msgbox p + p{margin-top:7px}
+.msgbox .hs{color:var(--muted);font-size:12.5px}
+.replies{display:flex;gap:6px;flex-wrap:wrap;margin-top:9px}
+.chip{border:1px solid var(--line2);background:#fff;border-radius:14px;padding:3px 11px;font-size:12.5px;font-weight:500}
+.chip:hover{border-color:var(--ink)}
+.chip.on{background:var(--ink);border-color:var(--ink);color:#fff}
+.cap{font-size:12.5px;color:var(--muted)}
+
+/* Day One: risks and coverage */
+.risk{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 14px;align-items:center;padding:11px 18px;border-bottom:1px solid var(--line);background:#fff}
+.risk:last-child{border-bottom:0}
+.risk .title{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-weight:600}
+.risk .detail{color:var(--muted);font-size:13px;margin-top:2px}
+.risk .meta{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:5px}
+.risk .acts{display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+.risk.gone{color:var(--muted);font-size:13px;background:var(--bg)}
+.cardfoot{padding:9px 18px;border-top:1px solid var(--line);font-size:12.5px;color:var(--muted);border-radius:0 0 12px 12px}
+.empty{padding:22px 18px;color:var(--muted)}
+.covhead,.cov{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr) minmax(0,1.3fr);gap:12px;align-items:center;padding:9px 18px}
+.covhead{padding-top:7px;padding-bottom:7px;border-bottom:1px solid var(--line);font-size:12px;color:var(--muted);background:#FBFBFC}
+.cov{border-bottom:1px solid var(--line)}
+.cov.qrow{background:#FAF8FF}
+.cov .n b{display:block}
+.cov .n span{font-size:12.5px;color:var(--muted)}
+.barwrap{display:flex;align-items:center;gap:8px}
+.bar{flex:1;height:5px;border-radius:3px;background:var(--track);overflow:hidden;min-width:24px}
+.bar i{display:block;height:100%;border-radius:3px;background:var(--blue)}
+.bar.done i{background:var(--green)}
+.pct{min-width:42px;text-align:center;padding:1px 6px;border:1px solid var(--line2);border-radius:6px;font-size:12.5px;background:#fff}
+.fin b{display:block}
+.fin span{font-size:12.5px;color:var(--muted)}
+.fin .btn{margin-top:4px}
+.was{text-decoration:line-through;color:var(--muted);font-weight:400;font-size:12.5px;margin-left:5px}
+
+/* Scan plan */
+.phead,.pgrid{display:grid;grid-template-columns:30px minmax(0,1.25fr) 96px minmax(0,1.5fr) minmax(0,.95fr) 132px;gap:12px;align-items:center;padding:8px 18px}
+.phead{font-size:12px;color:var(--muted);background:#FBFBFC;border-bottom:1px solid var(--line);border-radius:12px 12px 0 0}
+.prow{border-bottom:1px solid var(--line);background:#fff}
+.prow:last-child{border-bottom:0;border-radius:0 0 12px 12px}
+.prow.tagged{background:#FAF8FF}
+.prow.open{background:#FCFCFD}
+.why{font-size:13px}
+.why .pill{margin-right:5px}
+.right{text-align:right}
+.cost{margin:0 18px 10px 60px;padding:11px 16px;border:1px solid var(--ink);border-radius:10px;background:#fff}
+.cost h3{font-size:14px;font-weight:600}
+.cost .lead{font-size:12.5px;color:var(--muted);margin:2px 0 7px}
+.cost ul{margin:0 0 4px;padding-left:18px}
+.cost li{margin-bottom:2px}
+.cost li.main{font-weight:600}
+.cost input{width:100%;padding:7px 10px;border:1px solid var(--line2);border-radius:8px;background:#fff}
+.cost label{display:block;font-size:12.5px;color:var(--muted);margin:8px 0 4px}
+.cost .row{margin-top:10px}
+.changes{margin-top:14px}
+.changes ul{list-style:none;margin:0;padding:4px 18px 8px}
+.changes li{display:grid;grid-template-columns:64px 1fr;gap:10px;padding:6px 0;border-bottom:1px solid var(--line);font-size:13px}
+.changes li:last-child{border-bottom:0}
+.changes li span:first-child{color:var(--muted)}
+
+/* Overlays */
+.overlay{position:fixed;inset:0;z-index:40;background:rgba(20,20,32,.35);display:grid;place-items:center;padding:20px}
+.modal{width:min(520px,100%);background:#fff;border-radius:14px;border:1px solid var(--line);padding:20px 22px;box-shadow:0 20px 50px rgba(20,20,32,.18)}
+.modal h2{margin-bottom:8px}
+.modal .warnbox{border:1px solid var(--crimson);border-radius:10px;padding:10px 12px;margin:10px 0}
+.toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);z-index:50;background:var(--ink);color:#fff;padding:9px 16px;border-radius:10px;font-size:13px;max-width:min(560px,90vw);box-shadow:0 10px 30px rgba(20,20,32,.25)}
+
+@media (max-width:1040px){
+  .row1{grid-template-columns:minmax(0,1fr)}
+  .grid2,.grid2.setup{grid-template-columns:minmax(0,1fr)}
+  .proj,.user div{display:none}
+  .phead{display:none}
+  .pgrid{grid-template-columns:30px minmax(0,1fr) auto}
+  .pgrid .c-count,.pgrid .c-why{grid-column:2 / -1}
+  .pgrid .c-fin{grid-column:2}
+  .cost{margin-left:18px}
+}
+@media (max-width:700px){
+  .page{padding:14px 12px 72px}
+  .topbar{padding:0 10px;gap:6px}
+  .pbar{padding:6px 10px}
+  .tabs a{padding:0 8px}
+  .brand .bn,.steps{display:none}
+  .pagehead{flex-wrap:wrap}
+  .answer{grid-template-columns:minmax(0,1fr)}
+  .ans-nums{border-left:0;border-top:1px solid var(--line)}
+  .covhead{display:none}
+  .cov{grid-template-columns:minmax(0,1fr)}
+  .risk{grid-template-columns:minmax(0,1fr)}
+  .risk .acts{justify-content:flex-start}
+  .toolgrid,.dest{grid-template-columns:minmax(0,1fr)}
+}
+/* Screenshot modes: shot=1 compact with a fade, shot=2 the top row only, shot=3 the whole page. All hide the prototype controls. */
+.shot .chrome{position:static}
+.shot .page{padding-top:12px;padding-bottom:12px}
+.shot .pagehead{margin-bottom:10px}
+.shot1::after{content:"";position:fixed;left:0;right:0;bottom:0;height:26px;background:linear-gradient(rgba(246,246,248,0),var(--bg));pointer-events:none;z-index:25}
+.shot2 .day2{display:none}
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+(function(){
+'use strict';
+
+/* ---------- Sample data: one made-up company, one number set ---------- */
+/* Set to true to show a percentage range at hours 3 and 8 as well (10-30%, 40-60%). */
+var SHOW_EARLY_RANGE = false;
+
+var SYS = {
+  A:{name:'Within reach of AI tools', kind:'SharePoint, OneDrive and AI agents’ access', count:'1,240 stores', why:'Open to everyone in the company, or granted to an AI tool, so AI tools can surface them', short:'The stores within reach of AI tools'},
+  B:{name:'Payments', kind:'AWS account', count:'1,800 stores', why:'Public links, and names that suggest card data', short:'Payments'},
+  C:{name:'Online store', kind:'Google Cloud project', count:'3,100 stores', why:'Holds orders and checkout data, and is shared with outside apps', short:'Online store'},
+  D:{name:'Finance file shares', kind:'Azure subscription', count:'2,400 stores', why:'Open to large groups; names suggest payroll and bank details', short:'Finance file shares'},
+  E:{name:'Acquired company', kind:'AWS accounts', count:'9,000 stores', why:'Few signs of exposure in its settings so far', short:'Acquired company'},
+  F:{name:'Rest of Microsoft 365', kind:'SharePoint and OneDrive', count:'96,260 stores', why:'Not shared widely; read at the pace Microsoft allows', short:'Rest of Microsoft 365'},
+  G:{name:'Everything else', kind:'212 accounts and subscriptions', count:'228,400 stores', why:'Few signs of exposure; a small random sample is read early to check that', short:'Everything else'}
+};
+var ORDER = {
+  none:['B','D','A','C','E','F','G'],
+  ai:['A','B','D','C','E','F','G'],
+  acq:['E','B','D','A','C','F','G'],
+  pci:['B','C','D','A','E','F','G']
+};
+var TRIGS = {
+  ai:{title:'An AI rollout', ask:'What will our AI tools be able to see?',
+    first:'What your AI tools can reach: data open to everyone in the company, and stores an AI tool or agent was given access to. This is known from sharing and access settings within hours.',
+    trade:'Focusing on the AI rollout first. The rest of your estate reaches the same point about 10 hours later.',
+    when:'By hour 8, which stores. Later: which individually shared files, because Microsoft limits how fast file sharing can be read.',
+    tag:['A']},
+  acq:{title:'An acquisition or an incident', ask:'What is in the accounts or systems we point at?',
+    first:'The accounts or systems you point at. Here: Acquired company (AWS accounts).',
+    trade:'Focusing on the acquired company first. The rest of your estate will get its first results about 6 hours later.',
+    when:'By hour 8, which of its stores are exposed. What they hold fills in through the day.',
+    tag:['E']},
+  pci:{title:'An audit (PCI)', ask:'Where does card data sit, and is it exposed?',
+    first:'Stores likely to hold card data. This is a prediction, and it firms up as scanning runs.',
+    trade:'Focusing on likely card data first. The rest of your estate will get its first results about 3 hours later.',
+    when:'By hour 8, where card data most likely sits. Each store is confirmed as it is read.',
+    tag:['B','C']},
+  none:{title:'No specific trigger', ask:'Show me my biggest risks.',
+    first:'The whole estate, most exposed first.',
+    trade:'Nothing is traded off. Everything is read in order of exposure.',
+    when:'By hour 3, which stores are exposed. By hour 24, most of the critical risks, with a range that says how sure we are.',
+    tag:[]}
+};
+var TOOLS = [
+  ['copilot','Microsoft Copilot','Found with access: licences active in Microsoft 365'],
+  ['chatgpt','ChatGPT Enterprise','Found with access: connected to SharePoint'],
+  ['claude','Claude','Not found so far'],
+  ['gemini','Gemini','Not found so far'],
+  ['glean','Glean','Not found so far'],
+  ['agents','Your own AI agents','Found with access: 2 agents that can read AWS stores']
+];
+function defTools(){ return {copilot:true,chatgpt:true,claude:false,gemini:false,glean:false,agents:true}; }
+var DEST = {
+  ciso:{name:'The CISO', what:'A short message at hours 3, 8 and 24', opts:[['Email','ciso@larkfield.example'],['Slack','@ciso'],['Microsoft Teams','ciso@larkfield.example']]},
+  team:{name:'Critical-risk alerts for the team', what:'The moment one is found', opts:[['Slack','#security-day-one'],['Microsoft Teams','Security, Day One channel'],['Email','security@larkfield.example']]},
+  tickets:{name:'Tickets', what:'To the store’s owner when known, otherwise to this queue', opts:[['Jira','SEC'],['ServiceNow','Security Operations']]}
+};
+function defAlerts(){ var a={}; Object.keys(DEST).forEach(function(k){ a[k]={ch:DEST[k].opts[0][0], v:DEST[k].opts[0][1]}; }); return a; }
+var OWN_EXAMPLE = 'We close the acquisition on the 30th. What are we inheriting?';
+var OPEN = 'Open to everyone in the company';
+var RISKS = [
+  {id:'C1',scope:'q',name:'HR Compensation',where:'SharePoint site',expo:OPEN,detail:'312 files. Salaries and employee IDs in the ones we sampled.',pill:'restricted',owner:'HR Operations',found:{ai:3,none:3},rank:{ai:1,none:2},ticketAt:{ai:8,none:8}},
+  {id:'C2',scope:'q',name:'Project Atlas',where:'SharePoint site',expo:OPEN,detail:'48 files. Deal terms and valuation models.',pill:'restricted',owner:'Corporate Development',found:{ai:3,none:3},rank:{ai:2,none:3},ticketAt:{ai:8,none:24},confirmed:true},
+  {id:'C7',scope:'q',name:'Payroll Exports',where:'SharePoint site',expo:OPEN,detail:'27 files. Salaries and bank account numbers.',pill:'restricted',owner:'Payroll',found:{ai:24,none:24},rank:{ai:3,none:5},confirmed:true},
+  {id:'C3',scope:'q',name:'Benefits and Health Claims',where:'Storage bucket in AWS',expo:'An HR assistant agent can read it',detail:'1,120 files. Health information in the ones we sampled.',pill:'restricted',owner:'',found:{ai:3,none:8},rank:{ai:4,none:6}},
+  {id:'C6',scope:'q',name:'Board Materials',where:'SharePoint site',expo:OPEN,detail:'64 files. Board papers and unreleased results in the ones we sampled.',pill:'restricted',owner:'Company Secretary',found:{ai:8,none:24},rank:{ai:5,none:8}},
+  {id:'C4',scope:'q',name:'Finance Year-End Close',where:'SharePoint site',expo:OPEN,detail:'86 files. Bank account details in the ones we sampled.',pill:'confidential',owner:'Finance',found:{ai:3,none:24},rank:{ai:6,none:9}},
+  {id:'C5',scope:'q',name:'Legal Contracts Archive',where:'SharePoint site',expo:OPEN,detail:'540 files. Customer contracts with personal data in the ones we sampled.',pill:'confidential',owner:'Legal',found:{ai:3,none:24},rank:{ai:7,none:10}},
+  {id:'R1',scope:'rest',name:'payments-exports',where:'Storage bucket in Payments',expo:'Public: anyone on the internet can read it',detail:'Card numbers in the files we sampled.',pill:'restricted',owner:'Payments Engineering',found:{ai:8,none:3},rank:{ai:1,none:1},ticketAt:{ai:24,none:8}},
+  {id:'R2',scope:'rest',name:'customer-orders',where:'Database in Online store',expo:'Shared with 3 outside apps',detail:'Customer names, addresses and order history in the rows we sampled.',pill:'confidential',owner:'E-commerce',found:{ai:24,none:8},rank:{ai:2,none:4}},
+  {id:'R3',scope:'rest',name:'Payroll-Backup',where:'File share in Finance file shares',expo:'Open to all employees',detail:'Payroll files in the ones we sampled.',pill:'restricted',owner:'Finance',found:{ai:8,none:3},rank:{ai:3,none:7}},
+  {id:'R4',scope:'rest',name:'support-attachments',where:'Storage bucket',expo:'Public links',detail:'ID documents uploaded by customers, in the files we sampled.',pill:'restricted',owner:'',found:{ai:24,none:3},rank:{ai:4,none:5.5}}
+];
+
+/* ---------- State ---------- */
+var S = {screen:'setup', step:2, hour:3, trig:'ai', pick:'none', steers:[], reasons:{}, cost:null, how:false, tab:'q',
+  status:{}, access:false, perm:false, modal:null, reason:'', shot:0,
+  req:'auto', reqAt:null,              // the CISO's one-tap reply: auto (arrives by hour 8) | pending | none | declined
+  tools:defTools(), alerts:defAlerts(), write:'later',
+  own:'idle', ownText:OWN_EXAMPLE};    // own-words question: idle | asked | confirmed
+var app = document.getElementById('app');
+var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+function num(n){return n.toLocaleString('en-US');}
+function hoursText(h){return 'In about '+h+(h===1?' hour':' hours');}
+function rng(lo,hi){return lo+'–⁠'+hi+'%';}
+function walk(q){return q==='ai'||q==='none';}
+
+function parse(){
+  var parts = location.hash.replace(/^#/,'').split('&').filter(Boolean), p = {};
+  parts.forEach(function(x){var i=x.indexOf('='); if(i<0) p[x]=true; else p[x.slice(0,i)]=decodeURIComponent(x.slice(i+1));});
+  if(p.q==='copilot') p.q='ai';
+  if('plan' in p) S.screen='plan';
+  else if('day' in p){S.screen='day'; if([3,8,24].indexOf(+p.day)>=0) S.hour=+p.day;}
+  else S.screen='setup';
+  if(p.h && [3,8,24].indexOf(+p.h)>=0) S.hour=+p.h;
+  if(S.screen==='setup') S.step = p.step==='3' ? 3 : 2;
+  if(p.q==='own' && S.screen==='setup') S.pick='own';
+  if(p.q && TRIGS[p.q]){
+    if(S.screen==='setup') S.pick=p.q;
+    else if(walk(p.q)) S.trig=p.q;
+  }
+  S.steers=[];
+  if(p.steer) p.steer.split(',').forEach(function(x){
+    var m=/^([B-E])@(3|8|24)(c?)$/.exec(x);
+    if(m && !steerOf(m[1])) S.steers.push({sys:m[1],at:+m[2],by:m[3]?'c':'l'});
+  });
+  S.steers.sort(function(a,b){return a.at-b.at;});
+  if('cost' in p && SYS[p.cost]) S.cost=p.cost;
+  if(p.open==='how') S.how=true;
+  if(p.tab==='rest'||p.tab==='q') S.tab=p.tab;
+  if(p.req==='0') S.req='none'; else if(p.req==='1') S.req='pending';
+  if(p.own==='asked'||p.own==='confirmed') S.own=p.own;
+  if(p.write==='now') S.write='now';
+  if(p.modal==='fix') S.modal={type:'fix',id:p.id||'C1'};
+  S.shot = ['1','2','3'].indexOf(p.shot)>=0 ? +p.shot : 0;
+  if(S.trig==='none') S.tab='q';
+}
+function link(screen,o){
+  o=o||{};
+  var hour=o.hour||S.hour, q=o.q||((S.screen==='setup'&&walk(S.pick))?S.pick:S.trig), h;
+  if(screen==='setup') h='#setup&q='+(o.pick||S.pick)+(S.step===3?'&step=3':'');
+  else if(screen==='day') h='#day='+hour+'&q='+q;
+  else h='#plan&h='+hour+'&q='+q;
+  var st=('steer' in o)?o.steer:S.steers;
+  if(st && st.length && screen!=='setup') h+='&steer='+st.map(function(x){return x.sys+'@'+x.at+(x.by==='c'?'c':'');}).join(',');
+  if(S.shot) h+='&shot='+S.shot;
+  return h;
+}
+function go(h){ if(location.hash===h){parse();render();} else location.hash=h; }
+
+/* ---------- Derived numbers ---------- */
+var DUR={B:4,C:6,D:6,E:14};               // hours for a system's first look once it is read first
+function steerOf(k){ return S.steers.filter(function(x){return x.sys===k;})[0]||null; }
+function eff(){ // the plan changes made by the hour being viewed, oldest first; the latest is read first
+  var l=S.steers.filter(function(x){return x.at<=S.hour;}); if(!l.length) return null;
+  var last=l[l.length-1], bigS=l.filter(function(x){return x.sys==='E';})[0]||null;
+  var w=l.reduce(function(a,x){return a+(x.at<24?(x.sys==='E'?2:1):0);},0);   // weight of changes made before hour 24
+  return {list:l, n:l.length, sys:last.sys, at:last.at, by:last.by, big:!!bigS, bigAt:bigS?bigS.at:null, w:w,
+    delay:l.reduce(function(a,x){return a+(x.sys==='E'?4:2);},0)};
+}
+function wr(w){ return rng(70-5*w, 90-5*w); }   // the hour-24 estimate after changes of weight w
+function pending(){ var es=steerOf('E'); return S.screen!=='setup' && !(es && es.at<=S.hour) && (S.req==='pending' || (S.req==='auto' && S.hour>=8)); }
+function dayNums(){
+  var H=S.hour, e=eff(), d;
+  if(S.trig==='ai'){
+    d={3:{read:120,found:9,lo:10,hi:30,zone:28},8:{read:400,found:22,lo:40,hi:60,zone:36},24:{read:1155,found:37,lo:70,hi:90,left:85}}[H];
+    d={read:d.read,found:d.found,lo:d.lo,hi:d.hi,left:d.left,zone:d.zone};
+    if(H===24 && e && e.w){ var rd=[1155,1080,990,930,880,840][e.w]; d={read:rd,found:[37,35,32,30,28,27][e.w],lo:70-5*e.w,hi:90-5*e.w,left:1240-rd}; }
+    d.done = (e && (e.big || e.w>=3)) ? 'Friday' : 'Thursday';
+    d.rest = {3:null,8:{found:5},24:{found:11,lo:50,hi:70}}[H];
+    d.scale = 53;
+  } else {
+    d={3:{found:13,lo:10,hi:30,zone:40},8:{found:32,lo:40,hi:60,zone:50},24:{found:52,lo:70,hi:90}}[H];
+    d={found:d.found,lo:d.lo,hi:d.hi,zone:d.zone};
+    if(H===24 && e && e.w) d = {found:[52,49,45,42,40,38][e.w],lo:70-5*e.w,hi:90-5*e.w};
+    d.scale = 74;
+  }
+  d.firm = H===24 || SHOW_EARLY_RANGE;                 // is a percentage range shown?
+  d.tlo=Math.round(d.found/(d.hi/100)); d.thi=Math.round(d.found/(d.lo/100));
+  if(H===24) d.scale=Math.max(d.scale,d.thi);
+  d.range=rng(d.lo,d.hi);
+  return d;
+}
+function t1Base(){ return S.trig==='ai' ? {3:31,8:26,24:10} : {3:23,8:18,24:2}; }
+function tier1Hours(){ var e=eff(); return t1Base()[S.hour] + (e ? e.delay : 0); }
+function baseFinish(k){
+  var H=S.hour, h;
+  if(k==='A') return {t:'Thursday'};
+  if(k==='B'){h=(S.trig==='ai'?{3:20,8:15,24:0}:{3:12,8:7,24:0})[H]; return h ? {t:hoursText(h),h:h} : {t:'First look done',done:true};}
+  if(k==='D'){h=t1Base()[H]; return {t:hoursText(h),h:h};}
+  if(k==='C'||k==='E') return {t:'Tuesday'};
+  return {t:'Nov 28'};
+}
+function finish(k){
+  var b=baseFinish(k), e=eff();
+  if(!e) return b;
+  var ms=null, later=0;
+  e.list.forEach(function(x){
+    if(x.sys===k) ms=x;
+    else if(ms && x.at<ms.at+DUR[k]) later+=(x.sys==='E'?4:2);   // moved ahead of it while it was still being read
+  });
+  if(ms){
+    var left=DUR[k]-(S.hour-ms.at)+later;
+    return left<=0 ? {t:'First look done',done:true} : {t:hoursText(left),h:left,was:b.t};
+  }
+  if(b.done) return b;
+  if(b.h) return {t:hoursText(b.h+e.delay),h:b.h+e.delay,was:b.t};
+  if(e.big && k==='A') return {t:'Friday',was:'Thursday'};
+  if(e.big && (k==='C'||k==='E')) return {t:'Wednesday',was:'Tuesday'};
+  return b;
+}
+function planOrder(){
+  var o=ORDER[S.trig].slice(), e=eff();
+  if(e){ var mv=e.list.map(function(x){return x.sys;}).reverse(); o=mv.concat(o.filter(function(k){return mv.indexOf(k)<0;})); }
+  return o;
+}
+function scopeYour(){ return S.trig==='ai' ? 'your AI rollout' : 'your whole estate'; }
+function scopeThe(){ return S.trig==='ai' ? 'the AI rollout' : 'the whole estate'; }
+function costLines(k){ // worded the way the CISO reads it
+  var e=eff(), big=k==='E', own=DUR[k], b=finish(k), w0=e?e.w:0, main;
+  if(S.hour<24){
+    main='Moving this first lowers the hour-24 estimate for '+scopeYour()+' from '+wr(w0)+' to '+wr(w0+(big?2:1))+'.';
+  } else if(S.trig==='ai'){
+    var dn=dayNums();
+    main = big ? 'Moving this first delays what is left of your top priority. The last '+dn.left+' '+(dn.left===85?'sites':'stores')+' finish Friday, not Thursday.'
+               : 'Moving this first delays the most exposed stores still unread by about 2 hours. Your top priority still finishes '+dn.done+'.';
+  } else {
+    main = big ? 'Moving this first delays the most exposed stores still unread by about 4 hours. Tier 2 finishes Wednesday, not Tuesday.'
+               : 'Moving this first delays the most exposed stores still unread by about 2 hours.';
+  }
+  var wasTxt = /^In about/.test(b.t) ? b.t.charAt(0).toLowerCase()+b.t.slice(1) : 'on '+b.t;
+  var others = big ? 'The systems it jumps ahead of finish later: about 4 hours for the nearest, up to a day for the largest. Nothing is dropped; everything is still read by Nov 28.' : 'The systems it jumps ahead of finish about 2 hours later. Nothing is dropped; everything is still read by Nov 28.';
+  return [main, SYS[k].short+' gets its first look done in about '+own+' hours, not '+wasTxt+'.', others];
+}
+function steerSummary(){
+  var e=eff(); if(!e) return '';
+  var by=e.by==='c'?', asked by the CISO':'', head;
+  if(e.n===1) head='Plan changed at hour '+e.at+by+': '+SYS[e.sys].short+' moved first.';
+  else head=({2:'Two',3:'Three',4:'Four'}[e.n]||e.n)+' plan changes: '+
+    e.list.map(function(x,i){return SYS[x.sys].short+(i===0?' moved first':'')+' at hour '+x.at+(x.by==='c'?' (asked by the CISO)':'');}).join(', then ')+'.';
+  if(e.w) return head+' The hour-24 estimate for '+scopeThe()+' is now '+wr(e.w)+', down from '+rng(70,90)+'. You saw this cost before '+(e.n>1?'each change':'you confirmed')+'.';
+  if(S.trig==='ai' && e.big) return head+' The last 85 sites of the top priority finish Friday, not Thursday.';
+  return head+' The most exposed stores still unread finish about '+e.delay+' hours later.';
+}
+
+/* ---------- Shared pieces ---------- */
+function guide(){ // one line that tells a reviewer what to do on this screen
+  if(S.screen==='setup') return 'Start here. Pick a top priority, press Next, then “Done, open Day One”. The deck’s example is “An AI rollout”.';
+  if(S.screen==='day') return S.hour===24 ? 'This is hour 24. Next: open Scan plan and move a system up.'
+    : 'This is hour '+S.hour+'. Use Time to move to '+(S.hour===3?'hour 8 and hour 24':'hour 24')+'.';
+  return 'Press “Scan this first” on any system. You see the cost before anything moves.';
+}
+function protobar(){ // reviewer controls, not part of the product
+  if(S.shot) return '';
+  var qOn = S.screen==='setup' ? S.pick : S.trig;
+  function hb(h){ return '<button data-act="hour" data-h="'+h+'" class="'+(S.screen!=='setup'&&S.hour===h?'on':'')+'" aria-pressed="'+(S.screen!=='setup'&&S.hour===h)+'">Hour '+h+'</button>'; }
+  function qb(q,l){ return '<button data-act="pq" data-q="'+q+'" class="'+(qOn===q?'on':'')+'" aria-pressed="'+(qOn===q)+'">'+l+'</button>'; }
+  return '<div class="pbar" role="region" aria-label="Prototype controls">'+
+    '<div class="pt"><span class="pl">Prototype controls, not part of the product</span>'+guide()+' Sample data.</div>'+
+    '<div class="grp"><span class="k">Time</span><div class="pseg" role="group" aria-label="Time">'+hb(3)+hb(8)+hb(24)+'</div></div>'+
+    '<div class="grp"><span class="k">Top priority</span><div class="pseg" role="group" aria-label="Top priority">'+qb('ai','AI rollout')+qb('none','No specific trigger')+'</div></div>'+
+    '<button class="pbtn" data-act="restart">Start over</button></div>';
+}
+function rnote(html){ return '<p class="rnote">'+html+'</p>'; }
+function topbar(){
+  function tab(scr,label,extra){ return '<a href="'+link(scr)+'" class="'+(S.screen===scr?'on':'')+'">'+label+(extra||'')+'</a>'; }
+  return '<header class="topbar">'+
+    '<button class="iconbtn" aria-label="Menu"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M3 5h12M3 9h12M3 13h12"/></svg></button>'+
+    '<div class="brand"><span class="mark"></span><span class="bn">Day One</span></div>'+
+    '<span class="proj">Larkfield Group <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M2 4l3 3 3-3"/></svg></span>'+
+    '<nav class="tabs" aria-label="Screens">'+tab('setup','Setup')+tab('day','Day One')+tab('plan','Scan plan',pending()?'<span class="badge" title="One request from the CISO">1</span>':'')+'</nav>'+
+    '<span class="spacer"></span>'+
+    '<div class="user"><span class="avatar">SR</span><div><b>Sam Rivera</b><span class="r">Security lead</span></div></div></header>';
+}
+
+/* ---------- Setup ---------- */
+function walkNote(p, extra){
+  return walk(p) ? rnote('This walkthrough covers the AI rollout and the no-trigger case.'+(extra||''))
+                 : rnote('<b>This walkthrough covers the AI rollout and the no-trigger case. Pick one of those to start.</b>');
+}
+function stepQuestion(p){
+  var opts=['ai','acq','pci','none'].map(function(k){
+    var t=TRIGS[k], on=k===p;
+    return '<label class="opt'+(on?' on':'')+'"><input type="radio" name="trig" value="'+k+'" data-act="pick"'+(on?' checked':'')+'>'+
+      '<div><span class="t">'+t.title+'</span> <span class="a">'+t.ask+'</span></div></label>';
+  }).join('');
+  var reading='', ownOn=p==='own';
+  if(S.own==='asked') reading='<div class="reading"><b>I read this as:</b> the acquired company’s AWS accounts, 9,000 stores, read first. Is that right?'+
+    '<div class="row"><button class="btn sm primary" data-act="ownyes">Yes, read these first</button><button class="btn sm" data-act="ownedit">Edit</button></div></div>';
+  else if(S.own==='confirmed') reading='<div class="reading"><b>Confirmed.</b> The plan preview now starts with the acquired company, and the trade-off is shown beside it. <button class="linkbtn" data-act="ownedit">Edit</button></div>';
+  opts+='<div class="opt ownopt'+(ownOn?' on':'')+'"><label class="ol"><input type="radio" name="trig" value="own" data-act="pick"'+(ownOn?' checked':'')+'>'+
+      '<div><span class="t">In your own words</span> <span class="a">Type it as the CISO said it, and check how we read it.</span><span class="rtag">Later version</span></div></label>'+
+      (ownOn ? '<div class="ownbody"><div class="askrow"><input type="text" aria-label="The CISO’s top priority in your own words" data-in="own" value="'+esc(S.ownText)+'"><button class="btn" data-act="ask">Ask</button></div>'+reading+
+        rnote('Here, any text gets the same reading.')+'</div>' : '')+
+    '</div>';
+  var tools='';
+  if(p==='ai'){
+    tools='<div class="tools"><h3>Which AI tools?</h3><p class="s2">Ticked: the ones we found with access to your data. Add any you are rolling out.</p><div class="toolgrid">'+
+      TOOLS.map(function(t){ return '<label class="check"><input type="checkbox" data-tool="'+t[0]+'"'+(S.tools[t[0]]?' checked':'')+'><span><b>'+t[1]+'</b><span class="n">'+t[2]+'</span></span></label>'; }).join('')+
+      '</div></div>';
+  }
+  return '<section class="card pad"><h2>What is your CISO’s top priority right now?</h2>'+
+      '<p class="muted">The answer decides what gets read first. Everything else is still scanned. The CISO can change it with one tap from the first message.</p>'+
+      '<div class="opts" role="radiogroup" aria-label="What is your CISO’s top priority right now?">'+opts+'</div>'+tools+
+      '<div class="row"><button class="btn primary" data-act="next">Next: alerts and access</button><button class="btn text" data-act="skip">Skip for now</button></div>'+
+      walkNote(p, p==='ai'?' Ticking AI tools changes no numbers.':'')+
+    '</section>';
+}
+function stepAlerts(p){
+  var rows=Object.keys(DEST).map(function(k){
+    var D=DEST[k], A=S.alerts[k];
+    return '<div class="dest"><div><b>'+D.name+'</b><span class="d">'+D.what+'</span></div><div class="ctl">'+
+      '<select data-ch="'+k+'" aria-label="'+D.name+': channel">'+D.opts.map(function(o){return '<option'+(o[0]===A.ch?' selected':'')+'>'+o[0]+'</option>';}).join('')+'</select>'+
+      '<input type="text" data-dv="'+k+'" aria-label="'+D.name+': where" value="'+esc(A.v)+'"></div></div>';
+  }).join('');
+  rows+='<div class="dest"><div><b>You, the security lead</b><span class="d">The CISO’s replies and any delay</span></div><div class="ctl"><span class="static">Here, and by email</span></div></div>';
+  function wa(v,title,desc){ var on=S.write===v; return '<label class="opt'+(on?' on':'')+'"><input type="radio" name="write" value="'+v+'" data-act="write"'+(on?' checked':'')+'><div><span class="t">'+title+'</span><span class="d">'+desc+'</span></div></label>'; }
+  var can=walk(p);
+  return '<section class="card pad"><h2>Where updates and alerts go</h2>'+
+      '<p class="muted">Nothing here slows the scan. All of it can be changed later.</p>'+
+      '<div class="dests">'+rows+'</div>'+
+      '<div class="sect"><h3>Fixing from here (write access)</h3><div class="opts" role="radiogroup" aria-label="Write access">'+
+        wa('later','With the first findings (recommended)','Around hour 3 to 8, with a preview of each change. Until then, your team acts through tickets and its own tools.')+
+        wa('now','Grant write access now','Your security team may need to review this first. Early fixes still carry a warning until a store is fully scanned.')+
+      '</div></div>'+
+      '<div class="row"><button class="btn primary" data-act="start"'+(can?'':' disabled')+'>Done, open Day One</button><button class="btn" data-act="back">Back</button></div>'+
+      walkNote(p)+
+    '</section>';
+}
+function previewKey(){ return S.pick==='own' ? (S.own==='confirmed'?'acq':'none') : S.pick; }
+function viewSetup(){
+  var p=S.pick, pk=previewKey(), T=TRIGS[pk], order=ORDER[pk], base=ORDER.none;
+  var rows=order.map(function(k,i){
+    var tagged=T.tag.indexOf(k)>=0, from=base.indexOf(k), up=i<from;
+    return '<div class="pvrow'+(tagged?' tagged':'')+'" data-flip="pv-'+k+'"><span class="num">'+(i+1)+'</span>'+
+      '<div><div class="sysname">'+SYS[k].name+'</div><div class="syskind">'+SYS[k].kind+', '+SYS[k].count+'</div></div>'+
+      '<div class="tags">'+(tagged?'<span class="pill q">Top priority</span>':'')+(up?'<span class="pill up">Moved up from '+(from+1)+'</span>':'')+'</div></div>';
+  }).join('');
+  var st=S.step;
+  return '<div class="pagehead"><div><h1>Setup</h1><p class="sub">About two minutes. Everything on this page can be skipped, and changed later.</p></div>'+
+    '<ol class="steps"><li class="done">Connected, read-only</li></ol></div>'+
+    '<div class="strip ok"><span class="dot"></span><div><b>Scanning has already started.</b> 11 of 15 environments are connected, read-only, and mapping began when the first one connected. Nothing waits for this page.</div></div>'+
+    '<div class="grid2 setup">'+
+      (function(){
+        var tabs='<div class="stabs" role="tablist" aria-label="Setup steps">'+
+          '<button role="tab" data-act="step" data-s="2" class="'+(st===2?'on':'')+'" aria-selected="'+(st===2)+'"><span class="n">1</span>The CISO’s top priority</button>'+
+          '<button role="tab" data-act="step" data-s="3" class="'+(st===3?'on':'')+'" aria-selected="'+(st===3)+'"><span class="n">2</span>Alerts and access</button></div>';
+        var left = st===2 ? stepQuestion(p) : stepAlerts(p);
+        return left.replace(/^(<section[^>]*>)/, '$1'+tabs);
+      })()+
+      '<section class="card"><div class="cardhead"><h2>Scan plan preview</h2><span class="muted small">Reorders as you choose</span></div>'+
+        '<div class="pv">'+rows+'</div>'+
+        '<div class="trade"><div class="label">Read first</div><p>'+T.first+'</p>'+
+        '<div class="label">The trade-off, shown once</div><p>'+T.trade+'</p>'+
+        '<div class="label">What the CISO will know, and when</div><p>'+T.when+'</p></div>'+
+      '</section>'+
+    '</div>';
+}
+
+/* ---------- Day One ---------- */
+function riskStatus(r){
+  if(S.status[r.id]) return S.status[r.id];
+  var t=r.ticketAt && r.ticketAt[S.trig];
+  return (t && S.hour>=t) ? 'ticketed' : 'new';
+}
+function riskRow(r){
+  var st=riskStatus(r), confirmed=r.confirmed && S.hour===24;
+  if(st==='false') return '<div class="risk gone"><div><b>'+r.name+'</b> was marked as a false alarm. It is off the list and counted against our accuracy.</div><div class="acts"><button class="btn sm" data-act="undo" data-id="'+r.id+'">Undo</button></div></div>';
+  var isNew = r.found[S.trig]===S.hour && S.hour>3 && st==='new';
+  var acts;
+  if(st==='checking') acts='<span class="pill ticketed">Resolved, checking</span><span class="muted small">Every fix is re-checked</span>';
+  else if(st==='verified') acts='<span class="pill confirmed">Fixed and verified</span>';
+  else if(st==='ticketed') acts='<span class="pill ticketed">Ticketed</span><span class="muted small">'+(r.owner?'Sent to '+r.owner:'In your team’s queue')+'</span><button class="btn sm text" data-act="resolve" data-id="'+r.id+'">Mark resolved</button>';
+  else acts='<button class="btn sm primary" data-act="ticket" data-id="'+r.id+'">Open ticket</button><button class="btn sm" data-act="resolve" data-id="'+r.id+'">Mark resolved</button><button class="btn sm" data-act="false" data-id="'+r.id+'">False alarm</button><button class="btn sm" data-act="fix" data-id="'+r.id+'">Fix</button>';
+  return '<div class="risk"><div>'+
+      '<div class="title"><span class="pill crit">Critical</span><span>'+r.name+'</span><span class="muted small" style="font-weight:400">'+r.where+(r.owner?', owner '+r.owner:', no known owner')+'</span>'+(isNew?'<span class="pill new">New</span>':'')+'</div>'+
+      '<div class="detail">'+r.detail+'</div>'+
+      '<div class="meta"><span class="pill bad">'+r.expo+'</span><span class="pill '+r.pill+'">'+(r.pill==='restricted'?'Restricted':'Confidential')+'</span>'+
+        (confirmed?'<span class="pill confirmed">Confirmed by the full scan</span>':'<span class="pill sample">Based on a sample</span>')+
+        '</div>'+
+    '</div><div class="acts">'+acts+'</div></div>';
+}
+function offerText(){
+  return 'Your acquired company’s AWS is scheduled for Tuesday. Scanning it first lowers the hour-24 estimate for '+(S.trig==='ai'?'your AI rollout':'your whole estate')+' to '+rng(60,80)+'.';
+}
+function messageText(){ // what the CISO is sent at this milestone
+  var d=dayNums(), H=S.hour;
+  if(S.trig==='ai'){
+    if(H===3) return 'AI rollout: 1,240 stores are within reach of your AI tools, most of them SharePoint sites open to the whole company. 9 of the first 120 we read hold salary, health or M&A data. More by hour 8.';
+    if(H===8) return 'AI rollout: 22 of the 400 stores read so far hold salary, health or M&A data. Start with these 22. Outside the top priority: a public storage bucket with card numbers. Your team has it.';
+    return 'AI rollout: '+d.found+' stores to restrict before go-live, an estimated '+d.range+' of the total. The last '+d.left+' '+(d.left===85?'sites':'stores')+' are read by '+d.done+'. The rest of your estate reaches the same point in about '+tier1Hours()+' hours. Outside the top priority, the worst so far: a public storage bucket with card numbers. Your team has it.';
+  }
+  if(H===3) return d.found+' critical risks found so far in your most exposed stores. More by hour 8.';
+  if(H===8) return d.found+' critical risks found so far. Your team can start with these.';
+  return d.found+' critical risks found across your estate, an estimated '+d.range+' of the total. The most exposed stores finish in about '+tier1Hours()+' hours.';
+}
+function numbers(d){ // the two bars: how much is read, how much is found
+  var ai=S.trig==='ai', H=S.hour, html='';
+  if(ai){
+    var rp=d.read/1240*100;
+    html+='<div class="nb"><div class="nb-top"><span>Stores read</span><b>'+num(d.read)+' of 1,240</b></div>'+
+      '<div class="nbar" role="img" aria-label="'+num(d.read)+' of 1,240 stores read"><i class="fill" style="width:'+rp.toFixed(1)+'%"></i></div></div>';
+  } else if(H===24){
+    html+='<div class="nb"><div class="nb-top"><span>Stores given a first look</span><b>about 5% of about 350,000</b></div>'+
+      '<div class="nbar" role="img" aria-label="About 5 percent of stores given a first look"><i class="fill" style="width:5%"></i></div></div>';
+  }
+  var zs = d.firm ? d.tlo : d.zone, fill=d.found/d.scale*100, zl=zs/d.scale*100;
+  var zoneLabel = d.firm ? 'estimated total: '+d.tlo+' to '+d.thi : 'estimate still wide';
+  html+='<div class="nb"><div class="nb-top"><span>Critical risks found</span><b>'+d.found+'</b></div>'+
+    '<div class="nbar" role="img" aria-label="'+d.found+' critical risks found, '+zoneLabel+'"><i class="fill crim" style="width:'+fill.toFixed(1)+'%"></i><i class="zone" style="left:'+zl.toFixed(1)+'%;width:'+(100-zl).toFixed(1)+'%"></i></div>'+
+    '<div class="nb-note"><span>'+(d.firm?'An estimated '+(d.tlo-d.found)+' to '+(d.thi-d.found)+' still to find.':'Too little is read to size what is left.')+'</span>'+
+    '<span class="z"><i class="swatch"></i>'+zoneLabel+'</span></div></div>';
+  return html;
+}
+function viewDay(){
+  var H=S.hour, ai=S.trig==='ai', d=dayNums(), e=eff();
+  var question, answer, decision, rest='';
+  if(ai){
+    var unit = d.left===85 ? 'sites' : 'stores';
+    question='We are rolling out Copilot and ChatGPT Enterprise next week. What will our AI tools be able to see?';
+    if(H===3){ answer='1,240 stores are within reach of your AI tools, most of them SharePoint sites open to the whole company. 9 of the first 120 we read hold salary, health or M&amp;A data (sampled). More by hour 8.'; decision='The team can start on these 9 today.'; }
+    else if(H===8){ answer='22 of the 400 stores read so far hold salary, health or M&amp;A data (sampled).'; decision='Start with these 22.'; }
+    else { answer=d.found+' stores hold sensitive data, an estimated '+d.range+' of the total. Still to read: '+d.left+(d.left===85?' large SharePoint sites':' stores')+' and individually shared files, done '+d.done+'.'; decision='Keep the date and restrict these '+d.found+' first, or wait for the last '+d.left+' '+unit+' on '+d.done+'.'; }
+    if(!d.rest) rest='Rest of the estate: the exposure map is complete, and first results are on the way.';
+    else if(d.rest.lo) rest='Rest of the estate: '+d.rest.found+' critical risks found, an estimated '+rng(d.rest.lo,d.rest.hi)+' of the total there. It reaches the same point as the top priority about '+tier1Hours()+' hours from now.';
+    else rest='Rest of the estate: '+d.rest.found+' critical risks found so far. The estimate there is still wide.';
+  } else {
+    question='Where are my biggest risks?';
+    if(H===3){ answer='The exposure map is complete. '+d.found+' critical risks found so far in the most exposed stores (sampled). More by hour 8.'; decision='The team can start on these '+d.found+' today.'; }
+    else if(H===8){ answer=d.found+' critical risks found so far (sampled).'; decision='Start with these '+d.found+'.'; }
+    else { answer=d.found+' critical risks found across your estate, an estimated '+d.range+' of the total. The most exposed stores finish in about '+tier1Hours()+' hours.'; decision='The first two weeks of fixes can be planned from this list. The full picture arrives by Nov 28.'; }
+  }
+  var basis = ai ? d.found+' of the '+num(d.read)+' stores read so far hold sensitive data' : d.found+' critical risks in the stores read so far';
+  var how = S.how ? '<ol class="how">'+
+      '<li>We start from what past full scans found in stores like these.</li>'+
+      '<li>We correct that with what we find here: '+basis+'.</li>'+
+      '<li>About a tenth of today’s reading goes to stores picked at random from the lower tiers, to check that the ranking is not missing something.</li>'+
+      '<li>We show a range, and it leans cautious. While it is too wide to help, we show counts and coverage.</li>'+
+      '<li>On day 14, when the full scan is done, the CISO sees what it confirmed next to this estimate.</li></ol>' : '';
+  var sure = d.firm ? '<span class="range">'+d.range+'</span>of the total, found so far. An estimate, shown as a range.'
+                    : '<span class="early">Too early for a range.</span>Counts and coverage for now.';
+
+  // the message the CISO gets
+  var cs=S.steers.filter(function(x){return x.by==='c';})[0]||null;
+  var replies='', replyNote='', askedC=!!(cs&&H>=cs.at);
+  var tapped = H===3 && (pending() || askedC || S.req==='declined' || !!cs);
+  if(H===3){
+    replies='<div class="replies"><button class="chip'+(tapped?' on':'')+'" data-act="cisoscan" aria-pressed="'+tapped+'">Scan it first</button><button class="chip" data-act="cisochange">Change the priority</button><button class="chip" data-act="cisoopen">Open</button></div>';
+  } else {
+    replies='<div class="replies"><button class="chip" data-act="cisoopen">Open</button></div>';
+  }
+  if(askedC) replyNote='The CISO replied to the hour-3 message: “Scan it first”. You confirmed it at hour '+cs.at+'.';
+  else if(pending()) replyNote='The CISO replied to the hour-3 message: “Scan it first”. It is waiting for you in the scan plan.';
+  else if(S.req==='declined' && S.reqAt!==null && H>=S.reqAt) replyNote='The CISO replied to the hour-3 message: “Scan it first”. You set it aside, and the CISO was told.';
+  var hs = d.firm ? '' : 'How sure: too early for a range, so counts only.';
+  var sent='<section class="card sent"><div class="cardhead"><h2>Sent to the CISO</h2><span class="muted small">Hour '+H+' message</span></div><div class="sentbody">'+
+    '<div class="msgbox"><p>'+esc(messageText())+'</p>'+(H===3?'<p>'+offerText()+'</p>':'')+(hs?'<p class="hs">'+hs+'</p>':'')+replies+'</div>'+
+    (replyNote?'<p class="cap"><b>'+replyNote+'</b></p>':'')+
+    rnote('The CISO mostly reads these messages and rarely logs in. '+(H===3&&!replyNote?'Tap a reply to see how it reaches the lead.':'A tapped reply reaches the lead as a request.'))+'</div></section>';
+
+  // risks
+  var restCount=ai ? (d.rest?d.rest.found:0) : 0, tab=ai?S.tab:'q';
+  var pool=RISKS.filter(function(r){ return r.found[S.trig]<=H && (!ai || r.scope===tab); })
+               .sort(function(a,b){return a.rank[S.trig]-b.rank[S.trig];}).slice(0, S.shot===1?2:5);
+  var total = (ai && tab==='rest') ? restCount : d.found;
+  var ticketLine = {ai:{3:'None ticketed yet.',8:'4 ticketed.',24:'14 ticketed, 3 fixed and verified.'}, none:{3:'None ticketed yet.',8:'6 ticketed.',24:'19 ticketed, 4 fixed and verified.'}}[S.trig][H];
+  var riskTabs = ai ? '<div class="seg light" role="group" aria-label="Which risks">'+
+      '<button data-act="tab" data-t="q" class="'+(tab==='q'?'on':'')+'">Top priority ('+d.found+')</button>'+
+      '<button data-act="tab" data-t="rest" class="'+(tab==='rest'?'on':'')+'">Rest of the estate ('+restCount+')</button></div>' : '<span class="muted small">'+ticketLine+'</span>';
+  var riskBody = pool.length ? pool.map(riskRow).join('') : '<div class="empty">Nothing is flagged here yet. Exposed stores are known from their settings and are next in line, and nothing is flagged before it is read.</div>';
+  var foot = pool.length ? 'Showing the top '+pool.length+' of '+total+'. One line per root cause: a site open to everyone counts once, however many files it holds.'+(ai?' '+ticketLine:'') : '';
+
+  var strip='';
+  if(e) strip='<div class="strip plan"><div class="grow">'+steerSummary()+'</div><a class="linkbtn" href="'+link('plan')+'">See the plan</a></div>';
+  else if(pending()) strip='<div class="strip plan"><div class="grow"><b>The CISO replied to the hour-3 message: “Scan it first”,</b> for the acquired company. It is waiting for you, with its cost.</div><a class="linkbtn" href="'+link('plan')+'">Review in the scan plan</a></div>';
+
+  return '<div class="pagehead"><div><h1>Day one, hour '+H+'</h1><p class="sub">Larkfield Group. About 350,000 data stores. The clock started when the first environment connected.</p></div></div>'+strip+
+    '<div class="row1">'+
+      '<section class="card answer"><div class="ans-main"><div class="label">The CISO’s top priority, and the answer so far</div><p class="question">'+question+'</p>'+
+        '<p class="answertext">'+answer+'</p>'+
+        '<div class="decision"><span class="label">What the CISO can decide now</span><b>'+decision+'</b></div>'+
+        (rest?'<p class="restline">'+rest+'</p>':'')+'</div>'+
+        '<div class="ans-nums"><div class="label">The numbers behind it</div>'+numbers(d)+
+        '<div class="sureline"><div class="label">How sure we are</div><div>'+sure+' <button class="linkbtn" data-act="how" aria-expanded="'+S.how+'">'+(S.how?'Hide how':'How this is estimated')+'</button></div>'+how+'</div></div>'+
+      '</section>'+sent+
+    '</div>'+
+    '<div class="grid2 day2">'+
+      '<section class="card"><div class="cardhead"><h2>Top risks so far</h2>'+riskTabs+'</div>'+riskBody+
+        '<div style="padding:0 18px 12px">'+rnote('Press Fix on any risk to see the warning on early fixes. On a risk marked “Confirmed by the full scan” the warning is gone.')+'</div>'+(foot?'<div class="cardfoot">'+foot+'</div>':'')+'</section>'+
+      '<section class="card"><div class="cardhead"><h2>What is read, and what is not yet</h2></div>'+coverage()+'</section>'+
+    '</div>';
+}
+function coverage(){
+  var H=S.hour, i={3:0,8:1,24:2}[H], e=eff(), d=dayNums(), ai=S.trig==='ai', rows=[];
+  if(ai) rows.push({name:'Top priority: within reach of AI tools',count:'1,240 stores',pct:Math.round(d.read/1240*100),fin:d.done,was:d.done==='Friday'?'Thursday':null,q:true,
+    why: H===24 ? (d.left===85?'85 large SharePoint sites; SharePoint read limit':d.left+' stores left; SharePoint read limit, and the plan change') : 'SharePoint read limit'});
+  var t1pct=(ai?[8,30,70]:[12,40,92])[i]; if(H===24 && e && e.w) t1pct=(ai?[70,65,60,56,52,49]:[92,86,80,76,72,69])[e.w];
+  rows.push({name:'Tier 1: most likely critical',count:'4,200 stores',pct:t1pct,fin:hoursText(tier1Hours()),was:e?hoursText(t1Base()[H]).toLowerCase():null,why:ai?'The top priority was read first':'Read first'});
+  var t2pct=[1,6,20][i]; if(e && e.big){ if(H===24 && e.bigAt<24) t2pct=30; else if(H===8 && e.bigAt===3) t2pct=12; }
+  rows.push({name:'Tier 2: possibly sensitive',count:'38,000 stores',pct:t2pct,fin:(e&&e.big)?'Wednesday':'Tuesday',was:(e&&e.big)?'Tuesday':null,why:'SharePoint read limit'+((e&&e.big)?', and the plan change':'')});
+  rows.push({name:'Tier 3: likely low risk',count:'300,000 stores',pct:[0,0,2][i],lt:i<2,fin:'Nov 28',why:'Lowest priority'});
+  var html='<div class="covhead"><span>Group</span><span>First look done</span><span>Finishes, and why</span></div>';
+  html+=rows.map(function(r){
+    var bar='<div class="bar"><i style="width:'+Math.max(r.pct,1)+'%"></i></div><span class="pct">'+(r.lt?'&lt;1%':r.pct+'%')+'</span>';
+    return '<div class="cov'+(r.q?' qrow':'')+'"><div class="n"><b>'+r.name+'</b><span>'+r.count+'</span></div><div class="barwrap">'+bar+'</div>'+
+      '<div class="fin"><b>'+r.fin+(r.was?'<span class="was">'+r.was+'</span>':'')+'</b><span>'+r.why+'</span></div></div>';
+  }).join('');
+  html+='<div class="cov"><div class="n"><b>Not connected yet</b><span>4 environments</span></div><div class="barwrap"><span class="pill warn">Not connected</span></div>'+
+    '<div class="fin">'+(S.access?'<b>Request sent</b><span>Each owner got a ready-made request with the exact steps</span>':'<b>Waiting for your team</b><button class="btn sm" data-act="access">Request access</button>')+'</div></div>';
+  html+='<div class="cov"><div class="n"><b>Can’t be read</b><span>120 stores</span></div><div class="barwrap"><span class="pill bad">Can’t be read</span></div>'+
+    '<div class="fin">'+(S.perm?'<b>Sent to the account owner</b><span>With the one missing permission spelled out</span>':'<b>Needs a permission fix</b><button class="btn sm" data-act="perm">Fix permission</button>')+'</div></div>';
+  html+='<div class="cov"><div class="n"><b>Exposure map</b><span>Every connected store</span></div><div class="barwrap"><div class="bar done"><i style="width:100%"></i></div><span class="pill done">Done</span></div>'+
+    '<div class="fin"><b>Since hour 3</b><span>Sharing and access settings only, no contents</span></div></div>';
+  html+='<div class="cardfoot">'+(H===24?'About 5% of all stores have had a first look, which says little, so coverage is shown by risk. ':'')+'A first look is a quick sample. The full scan then confirms or withdraws each finding, all by Nov 28.</div>';
+  return html;
+}
+
+/* ---------- Scan plan ---------- */
+function viewPlan(){
+  var order=planOrder(), e=eff(), T=TRIGS[S.trig], pend=pending();
+  var rows=order.map(function(k,i){
+    var ms=e?e.list.filter(function(x){return x.sys===k;})[0]:null, moved=!!ms;
+    var f=finish(k), tagged=T.tag.indexOf(k)>=0, asked=pend&&k==='E'&&!f.done, open=!moved&&(S.cost===k||asked), action='';
+    if(moved) action='<span class="pill q">'+(k===e.sys?'Moved first':'Moved up')+' at hour '+ms.at+'</span>';
+    else if(asked) action='<span class="pill q">Asked by the CISO</span>';
+    else if(i>0 && 'BCDE'.indexOf(k)>=0 && !f.done && !(f.h && f.h <= DUR[k])) action='<button class="btn sm'+(open?' primary':'')+'" data-act="steer" data-sys="'+k+'">Scan this first</button>';
+    else if(k==='A' && !tagged) action='<span class="muted small">Paced by Microsoft’s limit</span>';
+    var cost='';
+    if(open){
+      var L=costLines(k), items='<ul><li class="main">'+L[0]+'</li><li>'+L[1]+'</li><li>'+L[2]+'</li></ul>';
+      if(asked) cost='<div class="cost" role="region" aria-label="Request from the CISO"><h3>The CISO asked for this: scan the acquired company first</h3>'+
+        '<p class="lead">The CISO tapped “Scan it first” in the hour-3 message. <button class="linkbtn" data-act="seemsg">See the message</button><br>The cost if you confirm now, in the words the CISO reads:</p>'+items+
+        '<div class="row"><button class="btn primary" data-act="confirm" data-sys="'+k+'" data-by="c">Confirm, scan this first</button><button class="btn" data-act="notnow">Not now</button></div>'+
+        '<p class="hint">You confirm because you know what else this delays, and whether these stores are ready to scan. The CISO is told either way.</p></div>';
+      else cost='<div class="cost" role="region" aria-label="Cost of moving this first"><h3>Before you confirm: what moving '+SYS[k].short+' first costs</h3>'+
+        '<p class="lead">In the words the CISO reads, in case you want their yes first.</p>'+items+
+        '<label for="reason">Why move it? Optional. It helps us learn which hunches were right.</label>'+
+        '<input id="reason" type="text" data-in="reason" value="'+esc(S.reason)+'" placeholder="For example: we think sharing there was looser than ours">'+
+        '<div class="row"><button class="btn primary" data-act="confirm" data-sys="'+k+'" data-by="l">Confirm, scan this first</button><button class="btn text" data-act="cancel">Cancel</button></div></div>';
+    }
+    return '<div class="prow'+(tagged||moved?' tagged':'')+(open?' open':'')+'" data-flip="p-'+k+'"><div class="pgrid">'+
+      '<span class="num">'+(i+1)+'</span><div><div class="sysname">'+SYS[k].name+'</div><div class="syskind">'+SYS[k].kind+'</div></div><span class="c-count">'+SYS[k].count+'</span>'+
+      '<span class="why c-why">'+(tagged?'<span class="pill q">Top priority</span>':'')+SYS[k].why+'</span>'+
+      '<span class="c-fin">'+(f.done?'<span class="pill done">First look done</span>':'<b>'+f.t+'</b>')+(f.was?'<span class="was">'+f.was+'</span>':'')+'</span>'+
+      '<span class="right">'+action+'</span></div>'+cost+'</div>';
+  }).join('');
+  var changes=[], dated=[];
+  if(e) e.list.forEach(function(x){ var note=S.reasons[x.sys];
+    dated.push([x.at, 'Hour '+x.at, SYS[x.sys].short+' moved first. '+(x.by==='c'?'Asked by the CISO, confirmed by you.':'Moved by you.')+(note&&x.by!=='c'?' Your note: “'+esc(note)+'”':'')]); });
+  if(S.req==='declined' && S.reqAt!==null && S.hour>=S.reqAt) dated.push([S.reqAt, 'Hour '+S.reqAt,'The CISO’s request to scan the acquired company first was set aside by you. The CISO was told.']);
+  dated.reverse().sort(function(a,b){return b[0]-a[0];}).forEach(function(x){ changes.push([x[1],x[2]]); });
+  changes.push(['Hour 2','Plan updated: 40 stores moved up because a similar store held customer data.']);
+  changes.push(['Setup', S.trig==='ai'?'The top priority, the AI rollout, set the starting order.':'No trigger was given, so the starting order is by exposure.']);
+  return '<div class="pagehead"><div><h1>Scan plan</h1><p class="sub">Systems in the order they are read, as of hour '+S.hour+'. Any of them can be moved up.</p></div></div>'+
+    (e?'<div class="strip plan"><div class="grow">'+steerSummary()+'</div><button class="btn sm" data-act="unsteer">'+(e&&e.n>1?'Undo the last change':'Undo')+'</button></div>':'')+
+    '<section class="card"><div class="phead"><span>#</span><span>System</span><span>Stores</span><span>Why it sits here</span><span>First look finishes</span><span></span></div>'+rows+'</section>'+
+    '<section class="card changes"><div class="cardhead"><h2>Every change comes with its reason</h2></div><ul>'+
+      changes.map(function(c){return '<li><span>'+c[0]+'</span><span>'+c[1]+'</span></li>';}).join('')+'</ul></section>';
+}
+
+/* ---------- Overlays ---------- */
+function modal(){
+  var m=S.modal; if(!m || m.type!=='fix') return '';
+  var r=RISKS.filter(function(x){return x.id===m.id;})[0];
+  var sample=!(r.confirmed && S.hour===24);
+  var body='<h2>Fix '+r.name+' from here?</h2>'+
+    (sample ? '<div class="warnbox">This finding is based on a sample, and the full scan is not done yet. Fixing it from here now could affect something we have not fully mapped.</div><p class="muted">Recommended: open a ticket and fix it in your own tool. The warning lifts for this store once its full scan is done.</p>'
+            : '<p>This store is fully scanned, so the finding is confirmed and the early-fix warning no longer applies.</p>')+
+    '<p class="muted" style="margin-top:8px">Fixing from here needs write access. Day one connects read-only, and write access is offered per platform. You see a preview before anything changes.</p>'+
+    '<div class="row"><button class="btn primary" data-act="ticket" data-id="'+r.id+'">Open ticket</button><button class="btn" data-act="fixany">'+(sample?'Fix it here anyway':'Review permissions')+'</button><button class="btn text" data-act="close">Cancel</button></div>';
+  return '<div class="overlay" data-act="close-bg"><div class="modal" role="dialog" aria-modal="true">'+body+'</div></div>';
+}
+var toastTimer=null;
+function toast(msg){
+  var old=document.querySelector('.toast'); if(old) old.remove();
+  var t=document.createElement('div'); t.className='toast'; t.setAttribute('role','status'); t.textContent=msg; document.body.appendChild(t);
+  clearTimeout(toastTimer); toastTimer=setTimeout(function(){t.remove();},4200);
+}
+
+/* ---------- Render ---------- */
+function tops(){ var m={}; document.querySelectorAll('[data-flip]').forEach(function(el){m[el.dataset.flip]=el.getBoundingClientRect().top;}); return m; }
+function render(){
+  var before=tops();
+  document.body.classList.toggle('shot',!!S.shot); document.body.classList.toggle('shot1',S.shot===1); document.body.classList.toggle('shot2',S.shot===2);
+  var view = S.screen==='setup' ? viewSetup() : S.screen==='plan' ? viewPlan() : viewDay();
+  app.innerHTML = '<div class="chrome">'+protobar()+topbar()+'</div><main class="page">'+view+'</main>'+modal();
+  document.title = 'Day One: '+(S.screen==='setup'?'Setup':S.screen==='plan'?'Scan plan':'hour '+S.hour);
+  if(reduceMotion || S.shot) return;
+  document.querySelectorAll('[data-flip]').forEach(function(el){
+    var o=before[el.dataset.flip]; if(o===undefined) return;
+    var dy=o-el.getBoundingClientRect().top; if(Math.abs(dy)<1 || !el.animate) return;
+    el.style.position='relative'; el.style.zIndex=dy>0?2:1;
+    el.animate([{transform:'translateY('+dy+'px)'},{transform:'none'}],{duration:450,easing:'cubic-bezier(.2,.7,.2,1)'});
+  });
+}
+
+/* ---------- Events ---------- */
+function resetRun(){ S.status={}; S.reasons={}; S.cost=null; S.tab='q'; S.req='auto'; S.reqAt=null; S.reason=''; S.how=false; S.access=false; S.perm=false; S.modal=null; }
+document.addEventListener('click',function(ev){
+  var el=ev.target.closest('[data-act]'); if(!el) return;
+  var a=el.dataset.act, r, q;
+  if(a==='close-bg'){ if(ev.target===el){S.modal=null;render();} return; }
+  switch(a){
+    case 'next': S.step=3; go(link('setup')); break;
+    case 'back': S.step=2; go(link('setup')); break;
+    case 'step': S.step=+el.dataset.s; go(link('setup')); break;
+    case 'skip': S.pick='none'; S.own='idle'; S.step=3; go(link('setup',{pick:'none'})); break;
+    case 'start': S.trig=S.pick; resetRun(); go(link('day',{hour:3,q:S.pick,steer:null})); break;
+    case 'ask': S.own='asked'; render(); break;
+    case 'ownyes': S.own='confirmed'; go(link('setup',{pick:'own'})); break;
+    case 'ownedit': S.own='idle'; render(); r=document.querySelector('[data-in=own]'); if(r) r.focus(); break;
+    case 'hour': go(link(S.screen==='setup'?'day':S.screen,{hour:+el.dataset.h})); break;
+    case 'pq':
+      q=el.dataset.q; S.pick=q; S.trig=q; S.own='idle'; resetRun();
+      if(S.screen==='setup') go(link('setup',{pick:q})); else go(link(S.screen,{q:q,steer:null}));
+      break;
+    case 'restart':
+      S.step=2; S.pick='none'; S.trig='ai'; S.hour=3; S.own='idle'; S.ownText=OWN_EXAMPLE; S.tools=defTools(); S.alerts=defAlerts(); S.write='later';
+      resetRun(); go('#setup&q=none'); break;
+    case 'tab': S.tab=el.dataset.t; render(); break;
+    case 'how': S.how=!S.how; render(); break;
+    case 'close': S.modal=null; render(); break;
+    case 'ticket':
+      r=RISKS.filter(function(x){return x.id===el.dataset.id;})[0];
+      S.status[r.id]='ticketed'; S.modal=null; render();
+      toast(r.owner?'Ticket opened and sent to '+r.owner+'.':'Ticket opened in your team’s queue, because this store has no known owner.');
+      break;
+    case 'false': S.status[el.dataset.id]='false'; render(); break;
+    case 'resolve':
+      (function(id){
+        var rr=RISKS.filter(function(x){return x.id===id;})[0];
+        S.status[id]='checking'; render();
+        toast('Marked resolved. The settings are re-checked now, and the contents at the next scan. If the risk is still there, it reopens.');
+        setTimeout(function(){ if(S.status[id]==='checking'){ S.status[id]='verified'; render(); toast(rr.name+': the fix is verified.'); } }, 3500);
+      })(el.dataset.id);
+      break;
+    case 'undo': delete S.status[el.dataset.id]; render(); break;
+    case 'fix': S.modal={type:'fix',id:el.dataset.id}; render(); break;
+    case 'fixany': S.modal=null; render(); toast('In the product, this opens the permission review, then a preview of the change.'); break;
+    case 'access': S.access=true; render(); toast('Request sent to the owners of the 4 environments.'); break;
+    case 'perm': S.perm=true; render(); toast('Missing: read permission on 120 stores. Sent to the account owner with the exact steps.'); break;
+    case 'cisoscan':
+      if(steerOf('E')){ toast('The acquired company was already moved up in the scan plan.'); break; }
+      S.req='pending'; S.reqAt=null; render(); toast('The CISO’s reply reaches the lead as a request. It is waiting in the scan plan, with its cost.'); break;
+    case 'cisochange': toast('For the CISO this opens the same short list. A new choice reorders the plan, and the lead is told.'); break;
+    case 'cisoopen': toast('For the CISO this opens the answer on this page, read-only.'); break;
+    case 'seemsg': if(S.req==='auto') S.req='pending'; go(link('day',{hour:3})); break;
+    case 'steer': S.cost = S.cost===el.dataset.sys ? null : el.dataset.sys; render(); break;
+    case 'cancel': S.cost=null; render(); break;
+    case 'notnow': S.req='declined'; S.reqAt=S.hour; S.cost=null; render(); toast('Set aside. The CISO is told, and can ask again.'); break;
+    case 'confirm':
+      (function(k,by){
+        S.cost=null; if(S.reason && by!=='c') S.reasons[k]=S.reason; S.reason='';
+        var l=S.steers.filter(function(x){return x.sys!==k;}).concat([{sys:k,at:S.hour,by:by}]);
+        l.sort(function(a,b){return a.at-b.at;});
+        go(link('plan',{steer:l})); toast('Plan updated. '+SYS[k].short+' is read first.');
+      })(el.dataset.sys, el.dataset.by);
+      break;
+    case 'unsteer':
+      (function(){
+        var e=eff(); if(!e) return; var last=e.list[e.list.length-1];
+        delete S.reasons[last.sys]; S.reason='';
+        go(link('plan',{steer:S.steers.filter(function(x){return x!==last;})}));
+      })();
+      break;
+  }
+});
+document.addEventListener('change',function(ev){
+  var el=ev.target, d=el.dataset||{}, c;
+  if(d.tool){ S.tools[d.tool]=el.checked; return; }
+  if(d.ch){
+    var opt=DEST[d.ch].opts.filter(function(o){return o[0]===el.value;})[0];
+    S.alerts[d.ch]={ch:el.value, v:opt?opt[1]:''}; render(); return;
+  }
+  if(d.act==='write'){
+    S.write=el.value; render();
+    if(el.value==='now') toast('The write-access request goes to your cloud and Microsoft 365 admins, with each permission listed.');
+    return;
+  }
+  if(d.act==='pick'){
+    S.own='idle'; go(link('setup',{pick:el.value}));
+    setTimeout(function(){
+      c = el.value==='own' ? document.querySelector('[data-in=own]') : document.querySelector('input[name=trig]:checked');
+      if(c) c.focus();
+    }, 60);
+  }
+});
+document.addEventListener('input',function(ev){
+  var d=ev.target.dataset; if(!d) return;
+  if(d.in==='reason') S.reason=ev.target.value;
+  if(d.in==='own') S.ownText=ev.target.value;
+  if(d.dv) S.alerts[d.dv].v=ev.target.value;
+});
+document.addEventListener('keydown',function(ev){
+  if(ev.key==='Escape' && S.modal){S.modal=null;render();}
+  if(ev.key==='Enter' && ev.target.dataset && ev.target.dataset.in==='own'){S.own='asked';render();}
+});
+window.addEventListener('hashchange',function(){parse();render();});
+
+if(!location.hash) history.replaceState(null,'','#setup');
+parse(); render();
+})();
+</script>
+</body>
+</html>
